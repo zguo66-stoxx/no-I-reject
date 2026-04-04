@@ -52,10 +52,16 @@ async function handleLogin() {
   const email    = document.getElementById('email-input').value.trim();
   const password = document.getElementById('password-input').value;
   if (!email || !password) { setAuthError('Enter your email and password.'); return; }
+  if (!sb) { setAuthError('App not ready – refresh the page.'); return; }
   setAuthBusy(true); setAuthError('');
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  setAuthBusy(false);
-  if (error) setAuthError(error.message);
+  try {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) setAuthError(error.message);
+  } catch(e) {
+    setAuthError('Unexpected error: ' + e.message);
+  } finally {
+    setAuthBusy(false);
+  }
 }
 
 async function handleSignUp() {
@@ -63,21 +69,25 @@ async function handleSignUp() {
   const password = document.getElementById('password-input').value;
   if (!email || !password) { setAuthError('Enter email and password (min 6 chars).'); return; }
   if (password.length < 6) { setAuthError('Password must be at least 6 characters.'); return; }
+  if (!sb) { setAuthError('App not ready – refresh the page.'); return; }
   setAuthBusy(true); setAuthError('');
-  const { data, error } = await sb.auth.signUp({ email, password });
-  setAuthBusy(false);
-  if (error) {
-    // 422 usually means password strength policy is on in Supabase settings
-    if (error.status === 422) {
-      setAuthError('Sign-up rejected: ' + error.message + ' (Check Supabase → Auth → Sign In/Up → Password Strength → set to None)');
-    } else {
-      setAuthError(error.message);
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if (error) {
+      if (error.status === 422) {
+        setAuthError('Rejected: ' + error.message + '. Go to Supabase → Auth → Sign In/Up → Password Strength → None');
+      } else {
+        setAuthError(error.message);
+      }
+      return;
     }
-    return;
-  }
-  // If email confirmation is ON, Supabase returns a user but no session
-  if (data.user && !data.session) {
-    setAuthError('Check your email for a confirmation link, then sign in.');
+    if (data.user && !data.session) {
+      setAuthError('Check your email for a confirmation link, then sign in.');
+    }
+  } catch(e) {
+    setAuthError('Unexpected error: ' + e.message);
+  } finally {
+    setAuthBusy(false);
   }
 }
 
