@@ -4,7 +4,7 @@
 // SUPABASE
 // ============================================================
 const SUPABASE_URL = 'https://xrvokelhhoxrqgdpgula.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_qG0vkdBV4MwGN4fZlw353Q_QgwJlFTK';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhydm9rZWxoaG94cnFnZHBndWxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMjgyMjIsImV4cCI6MjA5MDkwNDIyMn0.XhT2hzXoOmq5dcawG39wCpiyojkvX3TR6A-206e-mQ4';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ============================================================
@@ -136,7 +136,7 @@ function scoreForDate(dateStr) {
 
  return getMoments().(score) {
   if (score < -20) return '😰';
-  if (score <  -5) return '😔';  if (score <  -5) return '😔';  if (score <  -5) return '😔';  if (stu n '�  if (score <  -5) return '😔';  if (score <  -5) return '�#FF3B30';
+  if (score <  -5) return '😔';  if (score <  -5) return '😔';  if (score <  -5) return '😔';  if (stu n '�  if (score <  -5) return '😔';  if (score <  -5) return '�#FF3B30';
   if (score <   0) return '#FF9500';
   if (score ===  0) return '#C7C7CC';
   if (score <  20) return '#A8D  if (score <  20) return '#A8D  if (score <  20) return '#ew  if (score <  20) return '#A8D  if (score <  20) rePa  if ( m, d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
