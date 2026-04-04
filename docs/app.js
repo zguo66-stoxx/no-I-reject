@@ -64,9 +64,21 @@ async function handleSignUp() {
   if (!email || !password) { setAuthError('Enter email and password (min 6 chars).'); return; }
   if (password.length < 6) { setAuthError('Password must be at least 6 characters.'); return; }
   setAuthBusy(true); setAuthError('');
-  const { error } = await sb.auth.signUp({ email, password });
+  const { data, error } = await sb.auth.signUp({ email, password });
   setAuthBusy(false);
-  if (error) setAuthError(error.message);
+  if (error) {
+    // 422 usually means password strength policy is on in Supabase settings
+    if (error.status === 422) {
+      setAuthError('Sign-up rejected: ' + error.message + ' (Check Supabase → Auth → Sign In/Up → Password Strength → set to None)');
+    } else {
+      setAuthError(error.message);
+    }
+    return;
+  }
+  // If email confirmation is ON, Supabase returns a user but no session
+  if (data.user && !data.session) {
+    setAuthError('Check your email for a confirmation link, then sign in.');
+  }
 }
 
 async function handleSignOut() { await sb.auth.signOut(); }
