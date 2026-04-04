@@ -105,11 +105,31 @@ function showApp() {
   showTab('today');
 }
 
+function showToast(msg, isError) {
+  let t = document.getElementById('app-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'app-toast';
+    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.3)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = isError ? '#FF3B30' : '#333';
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
 // DATA
 async function loadMoments() {
   const { data, error } = await sb.from('moments').select('*')
     .eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if (!error) cachedMoments = data || [];
+  if (error) {
+    console.error('loadMoments error:', error);
+    showToast('Could not load data: ' + error.message, true);
+  } else {
+    cachedMoments = data || [];
+  }
 }
 
 function getMoments() { return cachedMoments; }
@@ -124,8 +144,13 @@ async function persistAddMoment(moment) {
   const { id: tempId, ...fields } = moment;
   const { data, error } = await sb.from('moments')
     .insert({ ...fields, user_id: currentUser.id }).select().single();
-  if (!error && data) {
-    // replace temp local id with the real Supabase UUID
+  if (error) {
+    console.error('persistAddMoment error:', error);
+    showToast('Save failed: ' + error.message, true);
+    // remove the optimistic entry since it didn't save
+    cachedMoments = cachedMoments.filter(m => m.id !== tempId);
+    renderCurrent();
+  } else if (data) {
     cachedMoments = cachedMoments.map(m => m.id === tempId ? data : m);
   }
 }
