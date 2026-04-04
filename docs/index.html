@@ -5,13 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>NoIReject</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div id="app">
 
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-emoji">🧘</div>
+      <h2 class="login-title">NoIReject</h2>
+      <p class="login-sub">Track your moments. Own your day.</p>
+      <div id="login-form">
+        <input id="email-input" type="email" placeholder="your@email.com" autocomplete="email" />
+        <button onclick="handleLogin()">Send Magic Link</button>
+      </div>
+      <div id="login-sent" class="hidden">
+        <div class="sent-icon">✉️</div>
+        <p>Magic link sent!<br>Check your email and tap the link.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App (hidden until logged in) -->
+  <div id="app-content" class="hidden">
+
   <!-- Header -->
   <header>
     <h1 id="header-title">Today</h1>
+    <button id="signout-btn" onclick="handleSignOut()">Sign out</button>
   </header>
 
   <!-- Tab Panes -->
@@ -99,10 +121,11 @@
         <span class="sheet-header-btn" style="opacity:0" aria-hidden="true">·</span>
       </div>
       <div id="day-sheet-content" class="sheet-body"></div>
-    </div>
-  </div>
+        </div>
 
-</div>
+  </div><!-- /#app-content -->
+
+</div><!-- /#app -->
 <script src="app.js"></script>
 </body>
 </html>
