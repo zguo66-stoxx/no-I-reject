@@ -427,6 +427,51 @@ function openAddModal() {
 }
 function closeAddModal() { document.getElementById('add-overlay').classList.add('hidden'); }
 
+function initIntensityScroll(picker) {
+  const track = picker.querySelector('.int-track');
+  if (!track) return;
+  const items = track.querySelectorAll('.int-item');
+  if (!items.length) return;
+  const itemW = items[0].offsetWidth;
+  const gap   = 8;
+  const pad   = (picker.clientWidth - itemW) / 2;
+  track.style.paddingLeft  = pad + 'px';
+  track.style.paddingRight = pad + 'px';
+  picker.scrollLeft = (form.intensity - 1) * (itemW + gap);
+}
+
+function handleIntensityScroll() {
+  const picker = document.getElementById('intensity-picker');
+  if (!picker) return;
+  const track = picker.querySelector('.int-track');
+  if (!track) return;
+  const items = track.querySelectorAll('.int-item');
+  if (!items.length) return;
+  const itemW = items[0].offsetWidth;
+  const gap   = 8;
+  const idx   = Math.round(picker.scrollLeft / (itemW + gap));
+  const val   = Math.min(Math.max(idx + 1, 1), 20);
+  if (val === form.intensity) return;
+  form.intensity = val;
+  items.forEach((it, i) => it.classList.toggle('active', i === idx));
+  const sc = form.type === 'excited' ? val : -val;
+  const sp = document.getElementById('score-preview');
+  if (sp) sp.textContent = 'Score: ' + (sc > 0 ? '+' : '') + sc;
+}
+
+function handleIntensityClick(e) {
+  const item = e.target.closest('.int-item');
+  if (!item) return;
+  const picker = document.getElementById('intensity-picker');
+  if (!picker) return;
+  const track = picker.querySelector('.int-track');
+  if (!track) return;
+  const items = Array.from(track.querySelectorAll('.int-item'));
+  const idx   = items.indexOf(item);
+  if (idx < 0) return;
+  picker.scrollTo({ left: idx * (item.offsetWidth + 8), behavior: 'smooth' });
+}
+
 function renderForm() {
   document.getElementById('btn-uncomfortable').classList.toggle('active', form.type === 'uncomfortable');
   document.getElementById('btn-excited').classList.toggle('active', form.type === 'excited');
@@ -434,10 +479,22 @@ function renderForm() {
   const sp = document.getElementById('score-preview');
   sp.textContent = 'Score: ' + (s > 0 ? '+' : '') + s;
   sp.className   = 'score-preview ' + form.type;
-  document.getElementById('intensity-picker').innerHTML =
-    Array.from({ length:20 }, (_, i) => i + 1)
-      .map(i => '<button class="int-btn' + (form.intensity === i ? ' active' : '') + '" onclick="selectIntensity(' + i + ')">' + i + '</button>')
-      .join('');
+  const _ipEl = document.getElementById('intensity-picker');
+  _ipEl.innerHTML =
+    '<div class="int-fade int-fade-l"></div>' +
+    '<div class="int-track">' +
+    Array.from({length:20}, (_, i) => i + 1)
+      .map(i => '<div class="int-item' + (form.intensity === i ? ' active' : '') + '" data-val="' + i + '">' + i + '</div>')
+      .join('') +
+    '</div>' +
+    '<div class="int-center-mark"></div>' +
+    '<div class="int-fade int-fade-r"></div>';
+  if (!_ipEl._bound) {
+    _ipEl._bound = true;
+    _ipEl.addEventListener('scroll', handleIntensityScroll, { passive: true });
+    _ipEl.addEventListener('click', handleIntensityClick);
+  }
+  requestAnimationFrame(() => initIntensityScroll(_ipEl));
   const allTags = getAllTags();
   document.getElementById('tags-picker').innerHTML = allTags
     .map((tag, idx) =>

@@ -360,20 +360,70 @@ header h1 { font-size: 22px; font-weight: 700; }
 .score-preview.excited       { color: var(--excited); }
 .score-preview.uncomfortable { color: var(--uncomfortable); }
 
-/* Intensity picker */
-.intensity-picker { display: flex; flex-wrap: wrap; gap: 6px; }
-.int-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+/* Intensity scroll picker */
+.intensity-picker {
+  position: relative;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  padding: 4px 0;
+}
+.intensity-picker:active { cursor: grabbing; }
+.intensity-picker::-webkit-scrollbar { display: none; }
+.int-track {
+  display: flex;
+  gap: 8px;
+  /* paddingLeft / paddingRight set dynamically in JS */
+}
+.int-item {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   border: 1.5px solid var(--sep);
   background: var(--bg);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  user-select: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s, color 0.15s;
 }
-.int-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; font-weight: 700; }
+.int-item.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  transform: scale(1.13);
+}
+.int-center-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--primary);
+  border-radius: 13px;
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 2;
+}
+.int-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 52px;
+  pointer-events: none;
+  z-index: 1;
+}
+.int-fade-l { left:  0; background: linear-gradient(to right, #fff, transparent); }
+.int-fade-r { right: 0; background: linear-gradient(to left,  #fff, transparent); }
 
 /* Tags */
 .tags-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
