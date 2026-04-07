@@ -358,6 +358,61 @@ function renderYear() {
     '<div class="card year-card">' + months + '</div>';
 }
 
+// MY FOCUS (goals & what helps)
+function reflectKey() { return 'noireject_focus_' + (currentUser ? currentUser.id : 'anon'); }
+
+function loadReflect() {
+  try {
+    return JSON.parse(localStorage.getItem(reflectKey()) || 'null') || { goals: '', helpers: '', updatedAt: null };
+  } catch { return { goals: '', helpers: '', updatedAt: null }; }
+}
+
+function saveReflect(data) {
+  localStorage.setItem(reflectKey(), JSON.stringify(data));
+}
+
+function renderReflectCard() {
+  const r = loadReflect();
+  const goals   = r.goals.split('\n').map(l => l.trim()).filter(Boolean);
+  const helpers = r.helpers.split('\n').map(l => l.trim()).filter(Boolean);
+  const empty   = goals.length === 0 && helpers.length === 0;
+  const dateStr = r.updatedAt
+    ? 'Updated ' + new Date(r.updatedAt).toLocaleDateString('en-US', { month:'short', day:'numeric' })
+    : '';
+  const goalItems   = goals.length   ? goals.map(g   => '<div class="focus-item">&bull; ' + esc(g)   + '</div>').join('') : '<div class="focus-empty">Nothing set yet</div>';
+  const helperItems = helpers.length ? helpers.map(h => '<div class="focus-item">&bull; ' + esc(h) + '</div>').join('') : '<div class="focus-empty">Nothing set yet</div>';
+  return (
+    '<div class="focus-card">' +
+      '<div class="focus-card-header">' +
+        '<span class="focus-card-title">📍 My Focus</span>' +
+        '<button class="focus-edit-btn" onclick="openReflectModal()">' + (empty ? '+ Add' : 'Edit') + '</button>' +
+      '</div>' +
+      '<div class="focus-section"><div class="focus-section-label">🎯 Goals</div>' + goalItems + '</div>' +
+      '<div class="focus-section"><div class="focus-section-label">💚 What Helps Me</div>' + helperItems + '</div>' +
+      (dateStr ? '<div class="focus-updated">' + esc(dateStr) + '</div>' : '') +
+    '</div>'
+  );
+}
+
+function openReflectModal() {
+  const r = loadReflect();
+  document.getElementById('reflect-goals').value   = r.goals;
+  document.getElementById('reflect-helpers').value = r.helpers;
+  document.getElementById('reflect-overlay').classList.remove('hidden');
+}
+
+function closeReflectModal() {
+  document.getElementById('reflect-overlay').classList.add('hidden');
+}
+
+function submitReflect() {
+  const goals   = document.getElementById('reflect-goals').value.trim();
+  const helpers = document.getElementById('reflect-helpers').value.trim();
+  saveReflect({ goals, helpers, updatedAt: new Date().toISOString() });
+  closeReflectModal();
+  if (currentTab === 'insights') renderInsights();
+}
+
 // INSIGHTS
 function renderInsights() {
   const moments = getMoments();
@@ -398,6 +453,7 @@ function renderInsights() {
   const draining = [...tagStats.filter(t => t.total < 0)].reverse();
 
   el.innerHTML =
+    renderReflectCard() +
     '<div class="card stats-card"><div class="stat-trio">' +
       '<div class="stat-block"><div class="stat-val">' + emojiForScore(avgScore) + '</div><div class="stat-label">Overall</div></div>' +
       '<div class="stat-block"><div class="stat-val">' + allDates.length + '</div><div class="stat-label">Days Logged</div></div>' +
@@ -555,8 +611,9 @@ async function submitMoment() {
 
 function handleOverlayClick(e, sheetId) {
   if (e.target !== e.currentTarget) return;
-  if (sheetId === 'add-sheet') closeAddModal();
-  if (sheetId === 'day-sheet') closeDayModal();
+  if (sheetId === 'add-sheet')     closeAddModal();
+  if (sheetId === 'day-sheet')     closeDayModal();
+  if (sheetId === 'reflect-sheet') closeReflectModal();
 }
 
 // BIND LISTENERS
@@ -586,6 +643,9 @@ window.changeMonth        = changeMonth;
 window.openDayDetail      = openDayDetail;
 window.closeDayModal      = closeDayModal;
 window.handleOverlayClick = handleOverlayClick;
+window.openReflectModal   = openReflectModal;
+window.closeReflectModal  = closeReflectModal;
+window.submitReflect      = submitReflect;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof supabase === 'undefined') {

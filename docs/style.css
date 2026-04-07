@@ -262,6 +262,69 @@ header h1 { font-size: 22px; font-weight: 700; }
   min-width: 0;
 }
 
+/* ── My Focus card ───────────────────────────────── */
+.focus-card {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+.focus-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.focus-card-title { font-size: 15px; font-weight: 600; }
+.focus-edit-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+.focus-section {
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--sep);
+}
+.focus-section:last-of-type { border-bottom: none; }
+.focus-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.focus-item  { font-size: 15px; padding: 2px 0; color: var(--text); line-height: 1.4; }
+.focus-empty { font-size: 14px; color: var(--text2); font-style: italic; padding: 2px 0; }
+.focus-updated {
+  font-size: 11px;
+  color: var(--text2);
+  padding: 7px 16px;
+  text-align: right;
+  border-top: 0.5px solid var(--sep);
+}
+.reflect-textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--sep);
+  background: var(--bg);
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  color: var(--text);
+}
+.reflect-textarea:focus { border-color: var(--primary); }
+.reflect-hint { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
 /* ── Insights ────────────────────────────────────── */
 .stats-card { padding: 20px; margin-bottom: 0; }
 .stat-trio  { display: flex; justify-content: space-around; }

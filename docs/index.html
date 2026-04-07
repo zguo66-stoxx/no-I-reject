@@ -122,6 +122,29 @@
       <div id="day-sheet-content" class="sheet-body"></div>
         </div>
 
+  <!-- ── My Focus Sheet ──────────────────────────────── -->
+  <div id="reflect-overlay" class="overlay hidden" onclick="handleOverlayClick(event,'reflect-sheet')">
+    <div id="reflect-sheet" class="sheet">
+      <div class="sheet-header">
+        <button class="sheet-header-btn" onclick="closeReflectModal()">Cancel</button>
+        <span class="sheet-header-title">📍 My Focus</span>
+        <button class="sheet-header-btn primary" onclick="submitReflect()">Save</button>
+      </div>
+      <div class="sheet-body">
+        <div class="form-section">
+          <div class="form-label">🎯 Goals</div>
+          <textarea id="reflect-goals" class="reflect-textarea" placeholder="e.g. Run a 5k by June&#10;Read 2 books this month&#10;Be more present with family"></textarea>
+          <div class="reflect-hint">One goal per line — update whenever things change.</div>
+        </div>
+        <div class="form-section">
+          <div class="form-label">💚 What Helps Me</div>
+          <textarea id="reflect-helpers" class="reflect-textarea" placeholder="e.g. Morning walk&#10;Call a friend&#10;Cooking something new"></textarea>
+          <div class="reflect-hint">Things that lift your mood when you're struggling.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </div><!-- /#app-content -->
 
 </div><!-- /#app -->
